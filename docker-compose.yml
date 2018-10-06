@@ -1,0 +1,28 @@
+version: '3'
+services:
+  firewall:
+    image: svlentink/ipfilter
+    links:
+      - app
+      - app:app #creating a reference that we'll use
+    volumes:
+      - $PWD:/passdir:ro #used to get the .htpasswd, don't mount this dir if you do not want it
+    ports:
+      - 8888:4321 # edit only the first part to specify the port for the host
+    environment:
+      APP_PORT: 8888 # The port the app wants exposed
+  pwd:
+    image: m31271n/htpasswd
+    volumes:
+      - $PWD:/outputdir
+    entrypoint: ["htpasswd","-bc","/outputdir/.htpasswd"]
+    command: ["$USERNAME","$PASSWORD"]
+
+# https://hub.docker.com/r/continuumio/anaconda3/
+  app: #specify here your app, but don't use the ports option (or expose)
+    image: continuumio/anaconda3
+    volumes:
+      - $PWD/notebooks:/opt/notebooks
+    command: "/bin/bash -c \"/opt/conda/bin/conda install jupyter -y --quiet && /opt/conda/bin/jupyter notebook --NotebookApp.token='' --notebook-dir=/opt/notebooks --allow-root --ip='*' --port=8888 --no-browser\""
+
+
