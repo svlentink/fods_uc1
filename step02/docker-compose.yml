@@ -1,0 +1,6 @@
+version: '3'
+services:
+  py:
+    build: .
+    volumes:
+      - /tmp/dataset:/datadir
