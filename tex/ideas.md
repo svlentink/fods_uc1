@@ -1,4 +1,8 @@
 
+country_code-bar.png
+lang-bar.png
+
+
 ## raw snipets for paper
 
 This paper show a first presentation of the provided data set.

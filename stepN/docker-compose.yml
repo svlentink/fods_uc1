@@ -4,7 +4,8 @@ services:
     build: .
     volumes:
       - /tmp/dataset:/datadir
-      - $PWD/main.py:/main.py:ro
+      - $PWD/step02.py:/main.py:ro
+#      - $PWD/step03.py:/main.py:ro
     depends_on:
       - db
   db:
@@ -13,8 +14,8 @@ services:
 #    environment:
 #      MONGO_INITDB_ROOT_USERNAME: root
 #      MONGO_INITDB_ROOT_PASSWORD: onlylocalxs
-#    volumes:
-#      - /mongodata:/data/db
+    volumes:
+      - /mongodata:/data/db
   webui:
     image: mongo-express
     env_file:
