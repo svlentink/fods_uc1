@@ -80,6 +80,7 @@ def parse_inp(inp):
     #END instead of read_json
     remove_columns(df,cols2keep)#does inplace
     df.set_index('id_str',inplace=True)
+    df.drop_duplicates(inplace=True)
     df2mongo(df,dbc)
     i+=1
     print('Parsing file',i,tf)
