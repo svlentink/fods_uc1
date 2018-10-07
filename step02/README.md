@@ -4,7 +4,8 @@ Quick debugging:
 ```shell
 docker run -it --rm \
   -v /tmp/dataset:/datadir \
-  --entrypoint python3 \
+  --entrypoint bash \
+  --network=step02_default \
   continuumio/anaconda3
 ```
 
