@@ -16,6 +16,19 @@ docker run -it --rm \
 ## Data layout
 Not all rows have all fields!
 
+### interesting
+```
+  "lang": "en",
+  "timestamp_ms": "1470996289806"
+  "place": {
+    "country_code": "AU",
+  "user": {
+    "followers_count": 3482,
+  "text": "@Geraldanthro @NeilTurner_ @realDonaldTrump want to do a comparison try maimed Vets pre &amp; post Iraq pullout. Bar graph that. @washingtonpost",
+
+```
+
+### Example
 This is the very first row:
 ```json
 {
