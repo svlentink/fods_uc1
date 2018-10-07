@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 inp='/datadir/first10.jsons'
-inp='/datdair/split*'
+inp='/datadir/split*'
 cols2keep= [
 'timestamp_ms', #instead of created_at
 'id_str', #instead of id, to avoid math on it
