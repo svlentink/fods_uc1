@@ -4,3 +4,19 @@ services:
     build: .
     volumes:
       - /tmp/dataset:/datadir
+  db:
+    image: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: onlylocalxs
+  app:
+    image: mongo-express
+    restart: always
+    env_file:
+      - .env #ME_CONFIG_BASICAUTH_PASSWORD
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: onlylocalxs
+      ME_CONFIG_BASICAUTH_USERNAME: pwd_in_.env
