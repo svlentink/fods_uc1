@@ -1,0 +1,18 @@
+# Blacklist everything
+*
+!*/
+# Now whitelist what we actually want
+!.gitignore
+!*.md
+!*.tex
+!*.bib
+!*.sty
+!*.yml
+!*.txt
+!*.png
+!*.csv
+!*.r
+!*.jpg
+!*.html
+!*.js
+!*.sh

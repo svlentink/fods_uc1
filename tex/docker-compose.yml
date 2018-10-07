@@ -1,0 +1,10 @@
+version: '2'
+services:
+  latexcompiler:
+    image: svlentink/texlive-full
+    volumes:
+      - $PWD:/data
+    environment:
+      TARGET: paper
+    entrypoint: ["texi2pdf", "--tidy", "/data/$TARGET.tex"]
+    command: ["--output", "/data/$TARGET.pdf"]

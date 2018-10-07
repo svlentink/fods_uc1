@@ -1,0 +1,119 @@
+In this section we describe the design of the LogDAG,
+discussing the various components by giving an example design.
+The design of the LogDAG is inspired by the IOTA Tangle\cite{popov2016tangle}.
+The components discussed should be
+seen as example solutions in a modular system,
+%implemented as a modular solution,
+enabling different protocols or algorithms to be chosen,
+creating a layered solution.
+
+In this section we will use $n$ for the amount of nodes participating in the LogDAG.
+The rotate time interval of the log data is denoted by $r$
+and the amount of blocks to validate by $v$.
+
+\subsection{Blocks}
+We begin with describing the units that contain the actual data,
+which we call blocks.
+These blocks contain log data of time interval $r$,
+which are created by rotating log files
+as shown in figure \ref{fig:formation}.
+
+\begin{figure}[H]
+\centering \includegraphics[width=.5\columnwidth]{block-formation.png}
+\caption{ \label{fig:formation}  
+Log block formation
+}
+\end{figure}
+
+Log files are merged into a compressed block,
+which is signed by the key of the host that creates the block
+and is encrypted with a public key.
+The private key corresponding to this public key should not be stored on any participating node,
+we call this key the \textit{auditor key pair}.
+
+\subsection{Block metadata}\label{metadata}
+
+To identify a block we create a block metadata object.
+This metadata object contains a minimum of the following attributes:
+
+\begin{lstlisting}
+{
+  blockid : 'hash_c',
+  hostname : 'node01',
+  time : 12345,
+  validates : [ 'hash_a', 'hash_b' ]
+}
+\end{lstlisting}
+
+The time is used for the \ttl,
+the retention period of the logs.
+%The blockid is dependent on the blocks it validates,
+%of which the quantity of validations may vary.
+The blockid is created using the hash of the $v$ blocks this block validates,
+thereby creating a dependency on the previous block(s).
+This block creation process is shown in figure \ref{fig:hash}.
+This dependency results in a DAG (directed acyclic graph).
+
+\begin{figure}[H]
+\centering \includegraphics[width=.4\columnwidth]{blockid.png}
+\caption{ \label{fig:hash}  
+Creation of blockid
+}
+\end{figure}
+
+When creating a new blockid,
+the linked block(s) are also retrieved and stored on the node which creates the blockid.
+
+\subsection{LogDAG}
+
+The array of block metadata,
+which we call the LogDAG,
+contains the metadata of all block.
+\begin{figure}[H]
+\centering \includegraphics[width=1\columnwidth]{host.png}
+\caption{ \label{fig:host}  
+Participating node
+}
+\end{figure}
+Nodes provide an interface to other nodes
+to retrieve blocks it has stored,
+which include the blocks it has validated,
+as shown in figure \ref{fig:host}.
+When new block metadata has been formed by a node,
+it is broadcast to all other nodes.
+Each node stores this metadata to its copy of the LogDAG.
+
+\subsection{Process}
+
+The process could look as follows:
+\begin{lstlisting}
+/etc/cron.d/createblock
+|
+|- rotate_log_files
+|- block_formation
+|  |- create_compressed_block
+|  |- sign_compressed_block
+|  '- encrypt_compressed_block
+|- create_block_metadata
+|  |- decide_which_to_validate
+|  |- retrieve_blocks_to_validate
+|  |- validate_blocks
+|  '- generate_blockid
+'- broadcast_block_metadata / add_to_LogDAG
+\end{lstlisting}
+in which the first line is triggered by the cron daemon.
+
+\subsection{Configuration}
+
+The participating nodes have a shared configuration containing:
+\begin{itemize}
+\item List of participating nodes
+\item \ttl\ for log retention
+\item Shared auditor public-key for encrypting the blocks
+\item The amount of blocks to validate per block, denoted as $v$
+\item List of default log files to include when available (e.g. \texttt{/var/log/auth.log})
+\end{itemize}
+
+The nodes itself have additional configuration options,
+such as specific logs to include in the block formation.
+

@@ -1,0 +1,43 @@
+%based on: http://rp.delaat.net/process.html
+
+\include{imports}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\label{abstract}
+\input{paper/abstract}
+\end{abstract}
+
+\section{Introduction}
+  \label{introduction}
+  \input{paper/accountability}
+  \input{proposal/intro}
+
+%\section{Related work}
+%  \label{related-work}
+%  \input{proposal/related.sander}
+
+\section{Research question}
+  \label{research-question}
+  \input{proposal/question}
+
+\section{Modeling}
+  \subsection{Method}
+  \label{method}
+  \input{paper/method}
+  
+  \subsection{Results}
+  \label{results}
+  \input{paper/result}
+
+\section{Discussion}
+  \input{paper/discussion}
+  \subsection{Future work}
+  \input{paper/future}
+
+\bibliographystyle{IEEEtran}
+  \bibliography{sander}%,secondcontributer}
+\end{document}
+
