@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-inp='/datadir/first1k.jsons'
+inp='/datadir/first10.jsons'
 #inp='/datdair/split*'
 cols2keep= [
 'timestamp_ms', #instead of created_at
@@ -58,7 +58,7 @@ def df2mongo(df,dbc,dbname='dataset',tablename='table1'):
 
 #https://github.com/pandas-dev/pandas/pull/21164
 #https://stackoverflow.com/questions/21411992/is-there-a-way-to-config-python-json-library-to-ignore-fields-that-has-null-valu
-# get get an error on: "utc_offset": -25200,
+# got an error on: "utc_offset": -25200,
 def remove_nulls(d):
   return {k: v for k, v in d.items() if v is not None}
 
@@ -68,6 +68,8 @@ def parse_inp(inp):
   tf=len(fls)
   for f in fls:
     #df = pd.read_json(f, orient='columns', lines=True)
+    #BEGIN instead of read_json
+    # looking back, we could have solved it using .apply or .applymap
     dfs = []
     with open(f) as fl:
       for l in fl.readlines():
@@ -75,6 +77,7 @@ def parse_inp(inp):
         b = json_normalize(a,errors='ignore')
         dfs.append(b)
     df = pd.concat(dfs)
+    #END instead of read_json
     remove_columns(df,cols2keep)#does inplace
     df.set_index('id_str',inplace=True)
     df2mongo(df,dbc)
