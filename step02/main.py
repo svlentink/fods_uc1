@@ -14,9 +14,10 @@ import pandas as pd
 from pymongo import MongoClient
 from pprint import pprint
 from glob import glob
+from time import sleep
+import json
 
-#with open(inpf, 'r') as
-df = pd.read_json(inpf, orient='columns', lines=True)
+#sleep(10) #wait for mongodb
 dbc = MongoClient('db', 27017)
 
 def remove_columns(df,cols_to_keep,cols_to_remove=[]):
@@ -27,20 +28,22 @@ def remove_columns(df,cols_to_keep,cols_to_remove=[]):
   print('Removing',cols_to_remove)
   return df.drop(columns=cols_to_remove)
 
-def df2mongo(df,dbc,dbname='dataset'):
+def df2mongo(df,dbc,dbname='dataset',tablename='table1'):
   db = dbc[dbname]
+#  db.authenticate('root', 'onlylocalxs')
+  tbl = db[tablename]
   ts = len(df)
   if ts <= 1000:
     arr = json.loads(df.T.to_json()).values()
-    db.insert_many(arr)
-    return db
+    tbl.insert_many(arr)
+    return tbl
   i=0
   for r in df.iterrows():
-    db.insert_one(r)
-    i++
+    tbl.insert_one(r)
+    i+=1
     if i %100 == 0:
       print('Inserting into Mongo',dbname,i,ts)
-  return db
+  return tbl
 
 def parse_inp(inp):
   fls = glob(inp)
@@ -50,5 +53,8 @@ def parse_inp(inp):
     df = pd.read_json(f, orient='columns', lines=True)
     cleandf = remove_columns(df,cols2keep)
     df2mongo(cleandf,dbc)
-    i++
+    i+=1
     print('Parsing',i,tf)
+
+
+parse_inp(inp)
