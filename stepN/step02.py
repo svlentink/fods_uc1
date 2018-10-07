@@ -2,6 +2,7 @@
 
 inp='/datadir/first10.jsons'
 inp='/datadir/split*'
+inp='/datadir/totalset.jsons'
 cols2keep= [
 'timestamp_ms', #instead of created_at
 'id_str', #instead of id, to avoid math on it
@@ -72,15 +73,19 @@ def parse_inp(inp):
     # looking back, we could have solved it using .apply or .applymap
     dfs = []
     with open(f) as fl:
+      j=0
       for l in fl.readlines():
         a = json.loads(l,object_hook=remove_nulls)
         b = json_normalize(a,errors='ignore')
         dfs.append(b)
+        if j % 1000 == 0:
+          print('Processing',f,j)
+        j+=1
     df = pd.concat(dfs)
     #END instead of read_json
     remove_columns(df,cols2keep)#does inplace
     df.set_index('id_str',inplace=True)
-    df.drop_duplicates(inplace=True)
+    df.drop_duplicates(subset='id_str',inplace=True)
     df2mongo(df,dbc)
     i+=1
     print('Parsing file',i,tf)
